@@ -1,5 +1,6 @@
 data/
 microdados/
+backup/
 *.log
 *.pyc
 __pycache__/
