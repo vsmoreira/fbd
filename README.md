@@ -1,4 +1,4 @@
-# Academic Project: [Project Title]
+# Academic Project: Análise Exploratória de Dados Abertos do ENEM / INEP
 
 ## Table of Contents
 - [Introduction](#introduction)
