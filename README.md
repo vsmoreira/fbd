@@ -10,18 +10,23 @@
 - [License](#license)
 
 ## Introduction
-This project is part of the academic curriculum for Data Base Fundamentals at Brasilia University. The main goal of this project is to [brief description of the project].
+Este projeto é parte da disciplina de Fundamentos de Bancos de Dados do Programa de Pós-Graduação em Ciência Aplicada - PPCA da UnB.
+
+O principal objetivo é realizar uma análise exploratória de dados massivos por meio da contrução de um modelo relacional dos microdados 
+do Exame Nacional do Ensino Médio - ENEM fornecidos pelo INEP através do portal [Dados Abertos](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem) do Governo Federal.
 
 ## Objectives
-- Objective 1
-- Objective 2
-- Objective 3
+- Criar um Modelo Entidade-Relacionamento normalizado dos dados do ENEM
+- Implementar um processo de extração, transformação e carga (ETL)
+- Levantar e analisar 5 questões de interesse em relação a esses mesmos dados
+- Utilizar álgebra relacional para realizar ao menos 3 análises
+- Implementar ao menos uma procedure/function
+- Implementar regras de negócio por meio de treiggers de banco
 
 ## Technologies Used
-- Programming Language: [Language]
-- Framework: [Framework]
-- Database: [Database]
-- Other Tools: [Tools]
+- Programming Language: SQL, PL/PgSQL
+- Database: Postgres 17.3
+- Other Tools: DBeaver, VSCode
 
 ## Installation
 1. Clone the repository:
@@ -32,19 +37,20 @@ This project is part of the academic curriculum for Data Base Fundamentals at Br
     ```sh
     cd your-repo-name
     ```
-3. Install dependencies:
+3. Load microdata in nicrodados_enem table
+4. Create database objects
     ```sh
-    [installation command]
+    psql -h localhost -U postgres -d postgres -a -f project_dml.sql
     ```
 
 ## Usage
-1. Run the application:
+1. Run the database:
     ```sh
-    [command to run the application]
+    docker run -d --name fbd -e POSTGRES_PASSWORD=passwd -p 5432:5432 -e PGDATA=/var/lib/postgresql/data/pgdata -v .\data:/var/lib/postgresql/data postgres
     ```
 2. Access the application at:
     ```sh
-    [URL or instructions to access the application]
+    jdbc:postgresql://localhost:5432/postgres
     ```
 
 ## Contributing

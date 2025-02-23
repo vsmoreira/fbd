@@ -194,5 +194,25 @@ insert into resposta_participante (id_participante, tp_prova, co_prova, tp_prese
 alter table inep.escola add foreign key (tp_dependencia_adm_esc) references tipo_dependencia_administrativa(cd_tipo_dep_adm);
 alter table inep.participante add foreign key (id_escola) references inep.escola(id_escola);
 alter table inep.participante add foreign key (id_local_prova) references inep.local_prova(id_local_prova);
+alter table participante add foreign key (tp_faixa_etaria) references tipo_faixa_etaria(cd_tipo);
 alter table inep.resposta_participante add foreign key (id_participante) references inep.participante(id_participante);
 alter table inep.resposta_participante add foreign key (co_prova) references inep.gabarito(co_prova);
+
+/**
+ * Triggers
+ */
+ -- Criar a função
+create or replace function evitar_update_delete_resposta_participante()
+returns trigger as $$
+begin
+    raise exception 'Operação não permitida: Não é possível atualizar ou excluir registros na tabela resposta_participante';
+    return null;
+end;
+$$ language plpgsql;
+
+-- Criar a trigger
+create trigger trg_evitar_update_delete_resposta_participante
+before update or delete on resposta_participante
+for each row
+execute function evitar_update_delete_resposta_participante();
+select * from resposta_participante;

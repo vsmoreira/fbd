@@ -63,7 +63,7 @@ limit 10;
 -- 4. projetar as maiores médias de redação por município e tipo de escola
 select
     e.no_municipio_esc as municipio,
-    e.co_uf_esc as uf,
+    uf."SIGLA" as uf,
     case e.tp_dependencia_adm_esc
         when 1 then 'Federal'
         when 2 then 'Estadual'
@@ -78,11 +78,12 @@ from
         rp.id_participante = p.id_participante
     )
     inner join escola e on (p.id_escola = e.id_escola)
+    left join estados uf on (uf."COD" = e.co_uf_esc)
 where
     not p.in_treineiro
     and rp.nu_nota_redacao is not null
 group by
-    e.co_uf_esc,
+	uf."SIGLA",
     e.no_municipio_esc,
     e.tp_dependencia_adm_esc
 order by avg(rp.nu_nota_redacao) desc
@@ -162,9 +163,22 @@ from
 group by
     p.tp_faixa_etaria;
 
-select * from estatisticas_participante;
+select
+	tfe.descricao,
+	ep.quantidade,
+	ep.media_nota as media,
+	round(ep.desvio_padrao) as desvio_padrao,
+	round(ep.menor_nota) as menor_nota,
+	round(ep.maior_nota) as maior_nota,
+	round(ep.primeiro_quartil ) as primeiro_quartil,
+	round(ep.mediana) as mediana,
+	round(ep.terceiro_quartil ) as terceiro_quartil
+from
+	estatisticas_participante ep
+inner join
+	tipo_faixa_etaria tfe on (ep.tp_faixa_etaria = tfe.cd_tipo );
 
--- função para cálculo do z-score
+-- -- função para cálculo do total da nota
 create or replace function calcular_nota_total(p_nu_inscricao bigint) 
 returns numeric as $$
 declare
@@ -188,6 +202,7 @@ begin
 end;
 $$ language plpgsql;
 
+-- função para cálculo do z-score
 create or replace function comparar_participantes(
     p_nu_inscrição_a bigint,
     p_nu_inscrição_b bigint
@@ -229,6 +244,4 @@ select
     calcular_nota_total(210060978194) nota_b,
     comparar_participantes(210060925335, 210060978194);
 
-select * from participante where tp_faixa_etaria = 2 and calcular_nota_total(nu_inscricao) BETWEEN 5000  and 6000 limit 1;
-
-select * from estatisticas_participante where tp_faixa_etaria = 17;
+select tfe.descricao, p.* from participante p inner join tipo_faixa_etaria tfe on (tfe.cd_tipo = p.tp_faixa_etaria) where p.nu_inscricao in (210060925335, 210060978194);
